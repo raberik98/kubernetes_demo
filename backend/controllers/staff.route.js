@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
   try {
     const data = new staffModel(req.body)
     await data.save()
-    res.json({id: data._id})
+    res.json(data)
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

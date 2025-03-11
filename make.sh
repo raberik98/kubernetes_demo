@@ -9,4 +9,11 @@ if [ "$1" = "start" ] && [ "$2" = "db" ]; then
     -d mongo)
 fi
 
+if [ "$1" = "build" ] && [ "$2" = "frontend" ]; then
+    (cd frontend && npm run build)
+
+    mv ./frontend/dist ./backend
+    mv ./backend/dist/vite.svg ./backend/dist/assets
+fi
+
 

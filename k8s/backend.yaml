@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: "default"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: eriktheviking/node-demo:v2
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORT
+          value: "8080"
+        - name: DB_CONN
+          value: "mongodb://admin:password@mongo-svc:27017/staff?authSource=admin"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  namespace: "default"
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
