@@ -1,0 +1,12 @@
+###
+POST http://localhost:8080/api/staff
+Content-Type: application/json
+
+{
+    "name": "name1",
+    "title": "senior",
+    "salary": 500
+}
+
+###
+GET http://localhost:8080/api/staff
