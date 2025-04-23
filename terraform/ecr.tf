@@ -12,7 +12,7 @@ resource "aws_ecr_repository" "this" {
   }
 }
 
-resource "null_resource" "push_images" {
+resource "terraform_data" "push_images" {
   depends_on = [aws_ecr_repository.this]
 
   provisioner "local-exec" {
