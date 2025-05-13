@@ -48,12 +48,12 @@ resource "aws_db_instance" "postgresql" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
 
-
   backup_retention_period = 7
   backup_window           = "03:00-04:00"
   maintenance_window      = "Mon:04:00-Mon:05:00"
 
   deletion_protection = false # Set it to true in production
+  skip_final_snapshot  = true # Default is false, delete this line in production
 
   monitoring_interval          = 60
   monitoring_role_arn          = aws_iam_role.rds_monitoring_role.arn
