@@ -12,7 +12,7 @@ module "db" {
 
   vpc_id = module.vpc.vpc_id
   subnet_ids = module.vpc.private_db_subnet_ids
-  vpc_cidr_block = module.vpc.private_db_subnet_cidr_blocks
+  vpc_cidr_block = module.vpc.vpc_cidr_block
 
   tag_name = var.project_name
 
