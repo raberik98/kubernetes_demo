@@ -31,6 +31,36 @@ resource "aws_subnet" "private" {
   }
 }
 
+resource "aws_subnet" "private_db_a" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.3.0/24"
+  availability_zone       = "${var.region}a"
+
+  tags = {
+    Name = "${var.project_name}-private-db-subnet"
+  }
+}
+
+resource "aws_subnet" "private_db_b" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.4.0/24"
+  availability_zone       = "${var.region}b"
+
+  tags = {
+    Name = "${var.project_name}-private-db-subnet"
+  }
+}
+
+resource "aws_subnet" "private_db_c" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.5.0/24"
+  availability_zone       = "${var.region}c"
+
+  tags = {
+    Name = "${var.project_name}-private-db-subnet"
+  }
+}
+
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.main.id
 

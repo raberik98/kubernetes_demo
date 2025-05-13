@@ -14,7 +14,7 @@ resource "aws_security_group" "eks_cluster" {
     protocol        = "tcp"
     security_groups = [aws_security_group.eks_nodes.id]
     description     = "Allow worker nodes to communicate with control plane"
-    }
+  }
 
   tags = {
     Name = "${var.project_name}-eks-cluster-sg"
@@ -52,10 +52,18 @@ resource "aws_eks_cluster" "this" {
     security_group_ids = [aws_security_group.eks_cluster.id]
   }
 
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_policy,
     aws_iam_role_policy_attachment.eks_service_policy
   ]
+}
+
+resource "aws_iam_openid_connect_provider" "eks" {
+  url             = aws_eks_cluster.this.identity[0].oidc[0].issuer
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
 }
 
 resource "aws_eks_node_group" "backend" {
@@ -72,13 +80,17 @@ resource "aws_eks_node_group" "backend" {
 
   instance_types = ["t3.medium"]
 
+  labels = {
+    "node-type" = "backend-nodes"
+  }
+
   tags = {
     Name = "backend-nodes"
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_worker_policy,
-    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_vpc_resource_controller,
     aws_iam_role_policy_attachment.ecr_read_policy
   ]
 }
@@ -95,7 +107,11 @@ resource "aws_eks_node_group" "ingress" {
     min_size     = 1
   }
 
-  instance_types = ["t2.micro"]
+  instance_types = ["t3.medium"]
+
+  labels = {
+    "node-type" = "ingress-nodes"
+  }
 
   tags = {
     Name = "ingress-nodes"
@@ -103,7 +119,7 @@ resource "aws_eks_node_group" "ingress" {
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_worker_policy,
-    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_vpc_resource_controller,
     aws_iam_role_policy_attachment.ecr_read_policy
   ]
 }
